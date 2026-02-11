@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>StableSweep | Gas-Aware Stable Routing</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-ornament"></div>
+  <header class="site-header">
+    <div class="brand">
+      <div class="brand-mark">SS</div>
+      <div class="brand-text">
+        <div class="brand-name">StableSweep</div>
+        <div class="brand-tag">Gas-aware stable routing for RobinPump</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="#dashboard">Dashboard</a>
+      <a href="#how">How it works</a>
+      <button class="cta">Launch demo</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="pill">24h hackathon build</p>
+        <h1>Trade stables cheaper by routing where gas + depth wins.</h1>
+        <p class="subhead">
+          StableSweep monitors liquidity across RobinPump venues, simulates split routes, and
+          highlights the lowest total cost trade in seconds.
+        </p>
+        <div class="hero-actions">
+          <button class="cta">Start routing</button>
+          <button class="ghost">View liquidity map</button>
+        </div>
+        <div class="metrics">
+          <div>
+            <div class="metric-value">3.4x</div>
+            <div class="metric-label">faster quote time</div>
+          </div>
+          <div>
+            <div class="metric-value">-42%</div>
+            <div class="metric-label">median gas cost</div>
+          </div>
+          <div>
+            <div class="metric-value">$2.1m</div>
+            <div class="metric-label">tracked stable depth</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-panel">
+        <div class="panel-title">Live routing simulator</div>
+        <div class="panel-sub">Mock data for demo. Swap engine pluggable.</div>
+        <form id="route-form" class="route-form">
+          <label>
+            Swap amount (USDC)
+            <input type="number" id="amount" value="50000" min="100" step="100" />
+          </label>
+          <label>
+            Target asset
+            <select id="target">
+              <option value="USDT">USDT</option>
+              <option value="DAI">DAI</option>
+              <option value="EURC">EURC</option>
+            </select>
+          </label>
+          <label>
+            Risk tolerance
+            <input type="range" id="risk" min="1" max="5" value="3" />
+          </label>
+          <button type="submit" class="cta full">Compute route</button>
+        </form>
+        <div id="route-result" class="route-result">
+          <div class="route-title">Best route</div>
+          <div class="route-body">Run the simulator to see the lowest-cost path.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="dashboard" class="dashboard">
+      <div class="section-head">
+        <h2>Liquidity map</h2>
+        <p>Track stable pools by depth, fees, and volatility signals.</p>
+      </div>
+      <div class="cards" id="pool-cards"></div>
+    </section>
+
+    <section id="how" class="how">
+      <div class="section-head">
+        <h2>How StableSweep works</h2>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Scan pools</h3>
+          <p>Pull stable liquidity + fee data from RobinPump venues every block.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>Simulate split routes</h3>
+          <p>Evaluate multi-hop, multi-pool routes using gas-aware slippage models.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Suggest best action</h3>
+          <p>Recommend the cheapest path with a clear expected savings readout.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div>StableSweep prototype for easyA Consensus Hackathon.</div>
+    <div>Designed for fast iteration and live data swap-in.</div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
