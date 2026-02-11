@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>StableSweep | Gas-Aware Stable Routing</title>
+  <title>StableSweep | Jupiter Stable Router</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -13,7 +13,7 @@
       <div class="brand-mark">SS</div>
       <div class="brand-text">
         <div class="brand-name">StableSweep</div>
-        <div class="brand-tag">Gas-aware stable routing for RobinPump</div>
+        <div class="brand-tag">Gas-aware stable routing with Jupiter on Solana</div>
       </div>
     </div>
     <nav class="nav">
@@ -27,10 +27,10 @@
     <section class="hero">
       <div class="hero-copy">
         <p class="pill">24h hackathon build</p>
-        <h1>Trade stables cheaper by routing where gas + depth wins.</h1>
+        <h1>Route stable swaps with live quotes and lower expected cost.</h1>
         <p class="subhead">
-          StableSweep monitors liquidity across RobinPump venues, simulates split routes, and
-          highlights the lowest total cost trade in seconds.
+          StableSweep uses Jupiter quote data to evaluate swap routes, monitor liquidity health,
+          and suggest practical execution paths for stablecoin trades.
         </p>
         <div class="hero-actions">
           <button class="cta">Start routing</button>
@@ -38,22 +38,22 @@
         </div>
         <div class="metrics">
           <div>
-            <div class="metric-value">3.4x</div>
-            <div class="metric-label">faster quote time</div>
+            <div class="metric-value">Live</div>
+            <div class="metric-label">Jupiter quote API</div>
           </div>
           <div>
-            <div class="metric-value">-42%</div>
-            <div class="metric-label">median gas cost</div>
+            <div class="metric-value">USDC</div>
+            <div class="metric-label">base input asset</div>
           </div>
           <div>
-            <div class="metric-value">$2.1m</div>
-            <div class="metric-label">tracked stable depth</div>
+            <div class="metric-value">API</div>
+            <div class="metric-label">backend-ready architecture</div>
           </div>
         </div>
       </div>
       <div class="hero-panel">
         <div class="panel-title">Live routing simulator</div>
-        <div class="panel-sub">Mock data for demo. Swap engine pluggable.</div>
+        <div class="panel-sub">Backed by `/api/quote` from a local Node server.</div>
         <form id="route-form" class="route-form">
           <label>
             Swap amount (USDC)
@@ -63,8 +63,7 @@
             Target asset
             <select id="target">
               <option value="USDT">USDT</option>
-              <option value="DAI">DAI</option>
-              <option value="EURC">EURC</option>
+              <option value="USDC">USDC</option>
             </select>
           </label>
           <label>
@@ -74,8 +73,8 @@
           <button type="submit" class="cta full">Compute route</button>
         </form>
         <div id="route-result" class="route-result">
-          <div class="route-title">Best route</div>
-          <div class="route-body">Run the simulator to see the lowest-cost path.</div>
+          <div class="route-title">Best live route</div>
+          <div class="route-body">Run the simulator to fetch a Jupiter-based route suggestion.</div>
         </div>
       </div>
     </section>
@@ -83,7 +82,7 @@
     <section id="dashboard" class="dashboard">
       <div class="section-head">
         <h2>Liquidity map</h2>
-        <p>Track stable pools by depth, fees, and volatility signals.</p>
+        <p>Monitors live quote quality for multiple trade sizes.</p>
       </div>
       <div class="cards" id="pool-cards"></div>
     </section>
@@ -95,18 +94,18 @@
       <div class="steps">
         <div class="step">
           <div class="step-num">1</div>
-          <h3>Scan pools</h3>
-          <p>Pull stable liquidity + fee data from RobinPump venues every block.</p>
+          <h3>Fetch quotes</h3>
+          <p>Request live USDC routes from Jupiter using slippage settings tied to risk mode.</p>
         </div>
         <div class="step">
           <div class="step-num">2</div>
-          <h3>Simulate split routes</h3>
-          <p>Evaluate multi-hop, multi-pool routes using gas-aware slippage models.</p>
+          <h3>Evaluate route quality</h3>
+          <p>Read price impact and route venues to estimate cost and execution confidence.</p>
         </div>
         <div class="step">
           <div class="step-num">3</div>
-          <h3>Suggest best action</h3>
-          <p>Recommend the cheapest path with a clear expected savings readout.</p>
+          <h3>Suggest execution</h3>
+          <p>Return the best route summary and update health cards for dashboard context.</p>
         </div>
       </div>
     </section>
@@ -114,7 +113,7 @@
 
   <footer class="footer">
     <div>StableSweep prototype for easyA Consensus Hackathon.</div>
-    <div>Designed for fast iteration and live data swap-in.</div>
+    <div>Configured for Jupiter-backed routing on Solana.</div>
   </footer>
 
   <script src="app.js"></script>

@@ -1,27 +1,37 @@
 # StableSweep (Hackathon Prototype)
 
-A lightweight web prototype for a gas-aware stable routing concept on RobinPump.
+StableSweep is a lightweight web project that demonstrates gas-aware stable routing with live Jupiter quotes on Solana.
+
+## Stack
+- Frontend: static HTML/CSS/JS
+- Backend: Node.js (`http` + native `fetch`)
+- Data source: Jupiter Quote API
 
 ## Run locally
 
-Option A (Python):
-
+```bash
+cd /Users/paulrichter/Documents/codex/snake1
+npm run dev
 ```
-python3 -m http.server 5173
-```
 
-Then open `http://localhost:5173` and load `index.html`.
+Then open [http://127.0.0.1:5173](http://127.0.0.1:5173).
 
-Option B (VS Code Live Server):
-- Open the folder in VS Code.
-- Right click `index.html` > "Open with Live Server".
+## API endpoints
+- `GET /api/quote?amount=50000&output=USDT&risk=3`
+- `GET /api/health`
 
 ## Files
-- `index.html` — layout and copy
-- `styles.css` — styling
-- `app.js` — mock data + routing simulator
+- `index.html` - UI layout and copy
+- `styles.css` - styling
+- `app.js` - frontend logic calling backend endpoints
+- `server.js` - static file server + Jupiter-backed API routes
 
-## Next steps
-- Replace mock pools in `app.js` with RobinPump data
-- Add wallet connect + transaction builder
-- Add alerts for low-liquidity windows
+## Notes
+- Input asset is fixed to `USDC` for this prototype.
+- Supported output assets are `USDT` and `USDC`.
+- Risk mode maps to slippage bps on backend:
+  - 1: 10 bps
+  - 2: 20 bps
+  - 3: 35 bps
+  - 4: 50 bps
+  - 5: 75 bps

@@ -1,0 +1,13 @@
+{
+  "name": "stablesweep",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Stable routing prototype with Jupiter-backed quote API",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

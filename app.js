@@ -1,108 +1,139 @@
-const pools = [
+const fallbackPools = [
   {
-    name: "PumpSwap USDC/USDT",
+    name: "Jupiter Route A",
     depth: 820000,
     feeBps: 3,
     gas: 0.22,
     volatility: "Low",
   },
   {
-    name: "NovaCurve USDC/DAI",
+    name: "Jupiter Route B",
     depth: 610000,
     feeBps: 2,
     gas: 0.18,
     volatility: "Low",
   },
   {
-    name: "StableForge USDC/EURC",
+    name: "Jupiter Route C",
     depth: 380000,
     feeBps: 4,
     gas: 0.12,
     volatility: "Medium",
   },
-  {
-    name: "PulsePool USDC/USDT",
-    depth: 470000,
-    feeBps: 1,
-    gas: 0.26,
-    volatility: "Low",
-  },
 ];
 
 const cards = document.getElementById("pool-cards");
+const form = document.getElementById("route-form");
+const result = document.getElementById("route-result");
 
-const format = (value) =>
+const format = (value, decimals = 0) =>
   new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
-    maximumFractionDigits: 0,
+    maximumFractionDigits: decimals,
   }).format(value);
 
-const formatBps = (value) => `${value} bps`;
+const formatNumber = (value, decimals = 2) =>
+  new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(value);
 
-const renderCards = () => {
+const formatPercent = (value) => `${(value * 100).toFixed(3)}%`;
+
+const renderCards = (rows = []) => {
+  const source = rows.length
+    ? rows.map((row, i) => ({
+        name: `${row.pair} @ ${row.venue || "Jupiter"}`,
+        depth: row.outAmount ? row.outAmount : fallbackPools[i % fallbackPools.length].depth,
+        feeBps: row.priceImpactPct ? Math.max(1, Math.round(row.priceImpactPct * 10000)) : 3,
+        gas: 0.2,
+        volatility: row.priceImpactPct && row.priceImpactPct > 0.01 ? "Medium" : "Low",
+      }))
+    : fallbackPools;
+
   cards.innerHTML = "";
-  pools.forEach((pool) => {
+  source.forEach((pool) => {
     const card = document.createElement("div");
     card.className = "card";
     card.innerHTML = `
       <h3>${pool.name}</h3>
       <div class="stat">${format(pool.depth)}</div>
-      <div class="meta">Depth · Fee ${formatBps(pool.feeBps)} · Gas ${pool.gas} gwei</div>
+      <div class="meta">Depth · Fee ${pool.feeBps} bps · Gas ${pool.gas} gwei</div>
       <div class="meta">Volatility: ${pool.volatility}</div>
     `;
     cards.appendChild(card);
   });
 };
 
-renderCards();
+const loadHealth = async () => {
+  try {
+    const response = await fetch("/api/health", { method: "GET" });
+    if (!response.ok) {
+      throw new Error("health endpoint failed");
+    }
 
-const form = document.getElementById("route-form");
-const result = document.getElementById("route-result");
-
-const simulateRoute = (amount, target, risk) => {
-  const candidates = pools.map((pool) => {
-    const liquidityPenalty = amount / pool.depth;
-    const feeCost = amount * (pool.feeBps / 10000);
-    const gasCost = pool.gas * 0.65;
-    const riskPenalty = risk > 3 && pool.volatility === "Medium" ? 0.0009 * amount : 0;
-    const totalCost = feeCost + amount * liquidityPenalty + gasCost + riskPenalty;
-    return { pool, totalCost };
-  });
-
-  candidates.sort((a, b) => a.totalCost - b.totalCost);
-  const best = candidates[0];
-  const savings = candidates[1]
-    ? candidates[1].totalCost - best.totalCost
-    : best.totalCost * 0.05;
-
-  return {
-    pool: best.pool.name,
-    totalCost: best.totalCost,
-    savings,
-    target,
-    split: `${Math.round(70 + risk * 4)}% / ${Math.round(30 - risk * 4)}%`,
-  };
+    const data = await response.json();
+    renderCards(data.rows || []);
+  } catch (_) {
+    renderCards();
+  }
 };
 
-form.addEventListener("submit", (event) => {
+loadHealth();
+
+const setResult = (title, body) => {
+  result.innerHTML = `
+    <div class="route-title">${title}</div>
+    <div class="route-body">${body}</div>
+  `;
+};
+
+form.addEventListener("submit", async (event) => {
   event.preventDefault();
+
+  const submitButton = form.querySelector('button[type="submit"]');
   const amount = Number(document.getElementById("amount").value || 0);
   const target = document.getElementById("target").value;
   const risk = Number(document.getElementById("risk").value);
 
   if (!amount || amount < 100) {
-    result.innerHTML = "<div class=\"route-title\">Best route</div><div class=\"route-body\">Enter a valid amount to simulate.</div>";
+    setResult("Best route", "Enter a valid amount greater than or equal to 100.");
     return;
   }
 
-  const route = simulateRoute(amount, target, risk);
-  result.innerHTML = `
-    <div class="route-title">Best route</div>
-    <div class="route-body">
-      Route via <strong>${route.pool}</strong> into ${route.target} with split ${route.split}.<br />
-      Estimated total cost: <strong>${format(route.totalCost)}</strong>.<br />
-      Savings vs next best: <strong>${format(route.savings)}</strong>.
-    </div>
-  `;
+  submitButton.disabled = true;
+  submitButton.textContent = "Fetching live quote...";
+
+  try {
+    const params = new URLSearchParams({
+      amount: String(amount),
+      output: target,
+      risk: String(risk),
+    });
+
+    const response = await fetch(`/api/quote?${params.toString()}`, { method: "GET" });
+    const payload = await response.json();
+
+    if (!response.ok) {
+      throw new Error(payload.error || "Failed to fetch route");
+    }
+
+    const routePath = payload.route && payload.route.length ? payload.route.join(" -> ") : payload.primaryVenue;
+    const body = [
+      `Provider: <strong>${payload.provider}</strong>.`,
+      `Route: <strong>${routePath}</strong>.`,
+      `Expected output: <strong>${formatNumber(payload.outAmount, 4)} ${payload.outputSymbol}</strong>.`,
+      `Price impact: <strong>${formatPercent(payload.priceImpactPct)}</strong>.`,
+      `Risk mode: <strong>${payload.confidence}</strong>.`,
+      `Estimated routing cost proxy: <strong>${format(payload.estimatedCostUsd, 2)}</strong>.`,
+    ].join("<br />");
+
+    setResult("Best live route", body);
+  } catch (error) {
+    setResult("Best live route", `Failed to fetch quote. ${error.message}`);
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = "Compute route";
+  }
 });
