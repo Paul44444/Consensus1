@@ -1,4 +1,4 @@
-# StableSweep AI
+# StableSweep AI (for EasyA Consensus Hackathon Hongkong 11./12. February 2026)
 
 StableSweep AI is a DeFi intelligence app built during the easyA Consensus Hackathon.  
 It combines live execution routing with LP strategy guidance and historical/backtest visualization.
