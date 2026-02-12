@@ -2,7 +2,7 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 
-const HOST = process.env.HOST || "127.0.0.1";
+const HOST = process.env.HOST || "0.0.0.0";
 const PORT = Number(process.env.PORT || 5173);
 const JUP_API_KEY = process.env.JUP_API_KEY || "";
 const TOKEN_CACHE_TTL_MS = 5 * 60 * 1000;
