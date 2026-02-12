@@ -17,13 +17,18 @@
       </div>
     </div>
     <nav class="nav">
-      <a href="#dashboard">Dashboard</a>
-      <a href="#how">How it works</a>
-      <button class="cta">Launch demo</button>
+      <button id="open-main-view" class="ghost" type="button">Dashboard</button>
+      <button id="open-chart" class="ghost" type="button">Chart View</button>
+      <button id="open-strategy-lab" class="ghost" type="button">Strategy Lab</button>
+      <button id="open-lp-coach" class="ghost" type="button">LP Adviser</button>
+      <button id="open-how-view" class="ghost" type="button">How it works</button>
+      <button id="launch-demo" class="cta" type="button">Launch demo</button>
     </nav>
   </header>
 
   <main>
+    <section id="alert-banner" class="alert-banner hidden"></section>
+    <div id="main-view" class="app-view">
     <section class="hero">
       <div class="hero-copy">
         <p class="pill">24h hackathon build</p>
@@ -33,8 +38,8 @@
           and suggest practical execution paths for stablecoin trades.
         </p>
         <div class="hero-actions">
-          <button class="cta">Start routing</button>
-          <button class="ghost">View liquidity map</button>
+          <button id="start-routing" class="cta" type="button">Start routing</button>
+          <button id="view-map" class="ghost" type="button">View liquidity map</button>
         </div>
         <div class="metrics">
           <div>
@@ -46,14 +51,15 @@
             <div class="metric-label">base input asset</div>
           </div>
           <div>
-            <div class="metric-value">API</div>
-            <div class="metric-label">backend-ready architecture</div>
+            <div id="provider-status" class="metric-value">Pending</div>
+            <div class="metric-label">provider status</div>
           </div>
         </div>
       </div>
       <div class="hero-panel">
         <div class="panel-title">Live routing simulator</div>
-        <div class="panel-sub">Backed by `/api/quote` from a local Node server.</div>
+        <div class="panel-sub">Backed by `/api/quote` from a local Node server with dynamic token support. <span id="last-quote-time">No live quote yet.</span></div>
+        <div class="source-note">Execution source: <span id="execution-source">Jupiter</span></div>
         <form id="route-form" class="route-form">
           <label>
             Swap amount (USDC)
@@ -64,18 +70,23 @@
             <select id="target">
               <option value="USDT">USDT</option>
               <option value="USDC">USDC</option>
+              <option value="SOL">SOL</option>
+              <option value="JUP">JUP</option>
+              <option value="BONK">BONK</option>
             </select>
           </label>
           <label>
             Risk tolerance
             <input type="range" id="risk" min="1" max="5" value="3" />
           </label>
+          <button id="run-scenario" type="button" class="ghost full">Run judge scenario</button>
           <button type="submit" class="cta full">Compute route</button>
         </form>
         <div id="route-result" class="route-result">
           <div class="route-title">Best live route</div>
           <div class="route-body">Run the simulator to fetch a Jupiter-based route suggestion.</div>
         </div>
+        <div id="history-list" class="history-list"></div>
       </div>
     </section>
 
@@ -108,6 +119,127 @@
           <p>Return the best route summary and update health cards for dashboard context.</p>
         </div>
       </div>
+    </section>
+    </div>
+
+    <section id="chart-view" class="chart-view app-view hidden">
+      <div class="section-head">
+        <h2>Live Market Chart</h2>
+        <p>Tracks USDC to USDT output ratio for a fixed 10,000 USDC quote.</p>
+      </div>
+      <div class="chart-controls">
+        <select id="chart-window" class="chart-select">
+          <option value="30m">Last 30m</option>
+          <option value="6h" selected>Last 6h</option>
+          <option value="today">Since start of day</option>
+          <option value="all">All collected</option>
+        </select>
+        <select id="chart-asset" class="chart-select">
+          <option value="SOL" selected>SOL</option>
+          <option value="BTC">BTC</option>
+          <option value="ETH">ETH</option>
+        </select>
+        <select id="chart-metric" class="chart-select">
+          <option value="index" selected>Indexed price</option>
+          <option value="price">Price (USD)</option>
+        </select>
+        <select id="chart-points" class="chart-select">
+          <option value="50">50 points</option>
+          <option value="100" selected>100 points</option>
+        </select>
+        <button id="refresh-chart" class="cta" type="button">Refresh chart</button>
+        <button id="close-chart" class="ghost" type="button">Back to main view</button>
+      </div>
+      <div class="chart-panel">
+        <svg id="market-chart" viewBox="0 0 800 280" preserveAspectRatio="none"></svg>
+      </div>
+      <div class="source-note">Chart source: <span id="chart-source">CoinGecko</span></div>
+      <div id="chart-meta" class="chart-meta"></div>
+    </section>
+
+    <section id="lp-coach" class="lp-coach app-view hidden">
+      <div class="section-head">
+        <h2>LP Adviser</h2>
+        <p>Non-custodial LP intelligence: where liquidity is likely to improve execution quality most.</p>
+      </div>
+      <div class="chart-controls">
+        <label class="chart-select lp-input-label">
+          Capital (USDC)
+          <input id="lp-capital" class="lp-input" type="number" value="25000" min="1000" step="500" />
+        </label>
+        <label class="chart-select lp-input-label">
+          Risk preference (1-5)
+          <input id="lp-risk" class="lp-input" type="range" value="3" min="1" max="5" step="1" />
+        </label>
+        <button id="run-lp-analysis" class="cta" type="button">Generate LP plan</button>
+        <button id="close-lp-coach" class="ghost" type="button">Back to main view</button>
+      </div>
+      <div class="source-note">Recommendation source: <span id="lp-source">Jupiter route telemetry + heuristic model</span></div>
+      <div id="lp-summary" class="chart-meta"></div>
+      <div id="lp-results" class="cards"></div>
+      <div class="section-head lp-projection-head">
+        <h2>LP Projection</h2>
+        <p>Historical context (CoinGecko) plus projected profit range from LP Adviser heuristics.</p>
+      </div>
+      <div class="lp-projection-controls">
+        <label class="lp-input-label">
+          Projection horizon
+          <input id="lp-projection-hours" class="lp-input" type="range" min="1" max="24" step="1" value="12" />
+        </label>
+        <div id="lp-projection-hours-value" class="source-note">12h</div>
+      </div>
+      <div class="chart-panel">
+        <svg id="lp-projection-chart" viewBox="0 0 800 280" preserveAspectRatio="none"></svg>
+      </div>
+      <div id="lp-projection-meta" class="chart-meta"></div>
+    </section>
+
+    <section id="strategy-lab" class="lp-coach app-view hidden">
+      <div class="section-head">
+        <h2>Strategy Lab</h2>
+        <p>Drag venues into your custom strategy, set allocations, and inspect projected risk/return.</p>
+      </div>
+      <div class="chart-controls">
+        <label class="chart-select lp-input-label">
+          Strategy capital (USDC)
+          <input id="strategy-capital" class="lp-input" type="number" value="25000" min="1000" step="500" />
+        </label>
+        <label class="chart-select lp-input-label">
+          Strategy risk (1-5)
+          <input id="strategy-risk" class="lp-input" type="range" value="3" min="1" max="5" step="1" />
+        </label>
+        <button id="load-strategy-data" class="cta" type="button">Load venue data</button>
+        <button id="close-strategy-lab" class="ghost" type="button">Back to main view</button>
+      </div>
+      <div class="source-note">Simulation source: <span id="strategy-source">Load venue data to begin.</span></div>
+      <div class="strategy-grid">
+        <div class="strategy-col">
+          <h3>Venue Pool (drag)</h3>
+          <div id="strategy-venue-pool" class="strategy-pool"></div>
+        </div>
+        <div class="strategy-col">
+          <h3>Your Strategy</h3>
+          <div id="strategy-dropzone" class="strategy-dropzone">Drop venues here</div>
+        </div>
+      </div>
+      <div class="chart-controls">
+        <button id="analyze-strategy" class="cta" type="button">Analyze strategy</button>
+      </div>
+      <div id="strategy-summary" class="chart-meta"></div>
+      <div class="lp-projection-controls">
+        <label class="lp-input-label">
+          Backtest window
+          <select id="strategy-backtest-window" class="chart-select">
+            <option value="30m">30m</option>
+            <option value="6h" selected>6h</option>
+            <option value="today">Today</option>
+          </select>
+        </label>
+      </div>
+      <div class="chart-panel">
+        <svg id="strategy-backtest-chart" viewBox="0 0 800 280" preserveAspectRatio="none"></svg>
+      </div>
+      <div id="strategy-backtest-meta" class="chart-meta"></div>
     </section>
   </main>
 
