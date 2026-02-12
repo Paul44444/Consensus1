@@ -4,8 +4,7 @@ StableSweep AI is a DeFi intelligence app built during the easyA Consensus Hacka
 It combines live execution routing with LP strategy guidance and historical/backtest visualization.
 
 Live demo: [https://stablesweep.onrender.com](https://stablesweep.onrender.com)  
-Repository: [https://github.com/Paul44444/Consensus1](https://github.com/Paul44444/Consensus1)
-
+Repository: [https://github.com/Paul44444/Consensus1](https://github.com/Paul44444/Consensus1)  
 YouTube Demo: (https://youtu.be/60iSfoN9SU0)
 
 ![Choosing methods](choose_tokens.png)
