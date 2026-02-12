@@ -5,7 +5,7 @@ It combines live execution routing with LP strategy guidance and historical/back
 
 Live demo: [https://stablesweep.onrender.com](https://stablesweep.onrender.com)  
 Repository: [https://github.com/Paul44444/Consensus1](https://github.com/Paul44444/Consensus1)  
-YouTube Demo: (https://youtu.be/60iSfoN9SU0)
+YouTube Demo: https://youtu.be/60iSfoN9SU0
 
 ![Choosing methods](choose_tokens.png)
 ![Strategy analysis chart](cut_diagram_strategy.png)
