@@ -6,6 +6,10 @@ It combines live execution routing with LP strategy guidance and historical/back
 Live demo: [https://stablesweep.onrender.com](https://stablesweep.onrender.com)  
 Repository: [https://github.com/Paul44444/Consensus1](https://github.com/Paul44444/Consensus1)
 
+![Choosing methods](choose tokens.png)
+![Strategy analysis chart](cut_diagram_strategy.png)
+
+
 ## What it does
 
 - **Live Routing Simulator**: fetches live Jupiter quotes and scores route quality (impact, hops, risk profile).
