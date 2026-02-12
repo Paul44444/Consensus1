@@ -70,3 +70,14 @@ HOST=0.0.0.0 PORT=5173 JUP_API_KEY=your_key npm run dev
 - `/Users/paulrichter/Documents/codex/snake1/styles.css` - visual design, animations, chart styling
 - `/Users/paulrichter/Documents/codex/snake1/app.js` - frontend state, API integration, chart rendering/interactions
 - `/Users/paulrichter/Documents/codex/snake1/server.js` - static server + API endpoints + data adapters
+
+## Screenshots
+
+### LP Projection
+![LP Projection](ims1/diagram2.png)
+
+### Strategy Lab (Venue Selection)
+![Strategy Lab Venue Selection](ims1/choose_tokens.png)
+
+### Strategy Backtest Chart
+![Strategy Backtest Chart](ims1/cut_diagram_strategy.png)
